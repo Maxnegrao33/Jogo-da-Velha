@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta author="Maciel Oliveira">
+  <title>Jogo da Velha</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="board" class="board">
+    <div class="cell" data-index="0"></div>
+    <div class="cell" data-index="1"></div>
+    <div class="cell" data-index="2"></div>
+    <div class="cell" data-index="3"></div>
+    <div class="cell" data-index="4"></div>
+    <div class="cell" data-index="5"></div>
+    <div class="cell" data-index="6"></div>
+    <div class="cell" data-index="7"></div>
+    <div class="cell" data-index="8"></div>
+  </div>
+
+  <style>
+    body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    }
+
+    .board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-gap: 5px;
+    }
+
+    .cell {
+    width: 100px;
+    height: 100px;
+    border: 1px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    }
+
+    .cell:hover {
+    background-color: #eee;
+    }
+  </style>
+
+  <script src="script.js">
+    document.addEventListener("DOMContentLoaded", function () {
+    const board = document.getElementById("board");
+    const cells = document.querySelectorAll(".cell");
+    let currentPlayer = "X";
+    let gameBoard = ["", "", "", "", "", "", "", "", ""];
+
+    cells.forEach((cell) => {
+      cell.addEventListener("click", handleCellClick);
+    });
+
+    function handleCellClick(event) {
+      const cellIndex = event.target.dataset.index;
+
+    if (gameBoard[cellIndex] === "" && !isGameOver()) {
+      gameBoard[cellIndex] = currentPlayer;
+      event.target.textContent = currentPlayer;
+      if (isWinner()) {
+        alert(`Jogador ${currentPlayer} venceu!`);
+        resetGame();
+      } else if (isBoardFull()) {
+        alert("Empate!");
+        resetGame();
+      } else {
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+      }
+    }
+  }
+
+   function isWinner() {
+    const winPatterns = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+
+    return winPatterns.some((pattern) => {
+      const [a, b, c] = pattern;
+      return (
+        gameBoard[a] !== "" &&
+        gameBoard[a] === gameBoard[b] &&
+        gameBoard[a] === gameBoard[c]
+       );
+     });
+    }
+
+   function isBoardFull() {
+     return gameBoard.every((cell) => cell !== "");
+   }
+
+   function isGameOver() {
+     return isWinner() || isBoardFull();
+   }
+
+   function resetGame() {
+     gameBoard = ["", "", "", "", "", "", "", "", ""];
+     currentPlayer = "X";
+     cells.forEach((cell) => (cell.textContent = ""));
+    }
+   });
+
+  </script>
+</body>
+</html>
